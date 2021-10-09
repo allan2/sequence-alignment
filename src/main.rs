@@ -13,5 +13,4 @@ fn main() {
 	let icb = problem_set::in_class_b();
 	let soln = icb.solve();
 	println!("{}", soln);
-
 }
