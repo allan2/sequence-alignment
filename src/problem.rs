@@ -23,8 +23,14 @@ impl<'a> Problem<'a> {
 		seq_x: Sequence<'a>,
 		seq_y: Sequence<'a>,
 	) -> Self {
-		assert!(match_ > mismatch, "Match score must be greater than mismatch penalty");
-		assert!(match_ > gap_extend, "Match score must be greater than gap penalty");
+		assert!(
+			match_ > mismatch,
+			"Match score must be greater than mismatch penalty"
+		);
+		assert!(
+			match_ > gap_extend,
+			"Match score must be greater than gap penalty"
+		);
 		assert!(!seq_x.is_empty(), "Sequence X cannot be empty");
 		assert!(!seq_y.is_empty(), "Sequence Y cannot be empty");
 
@@ -121,23 +127,23 @@ impl<'a> Problem<'a> {
 		for i in 0..m_len {
 			for j in 0..n_len {
 				// Fill in the scoring matrix.
-				if i == 0 && j == 0 {
-					()
-				} else if i == 0 {
-					m[[0, j]] = self.gap_extend * j as i32;
-				} else if j == 0 {
-					m[[i, 0]] = self.gap_extend * i as i32;
-				} else {
-					// Compute candidate scores.
-					let x = if i == 0 { b'0' } else { self.seq_x[i - 1] };
-					let y = if j == 0 { b'0' } else { self.seq_y[j - 1] };
-					let align = m[[i - 1, j - 1]] + align_score(self.match_, self.mismatch, x, y);
-					let gap_down = m[[i - 1, j]] + self.gap_extend;
-					let gap_right = m[[i, j - 1]] + self.gap_extend;
-					let mut a = [align, gap_down, gap_right];
-					a.sort();
-					// Take the highest.
-					m[[i, j]] = *a.last().unwrap();
+				match (i, j) {
+					(0, 0) => (),
+					(0, _) => m[[0, j]] = self.gap_extend * j as i32,
+					(_, 0) => m[[i, 0]] = self.gap_extend * i as i32,
+					(_, _) => {
+						// Compute candidate scores.
+						let x = if i == 0 { b'0' } else { self.seq_x[i - 1] };
+						let y = if j == 0 { b'0' } else { self.seq_y[j - 1] };
+						let align =
+							m[[i - 1, j - 1]] + align_score(self.match_, self.mismatch, x, y);
+						let gap_down = m[[i - 1, j]] + self.gap_extend;
+						let gap_right = m[[i, j - 1]] + self.gap_extend;
+						let mut a = [align, gap_down, gap_right];
+						a.sort();
+						// Take the highest.
+						m[[i, j]] = *a.last().unwrap();
+					}
 				}
 			}
 		}
@@ -237,7 +243,7 @@ mod solution {
 		pub paths: Vec<Vec<Coordinates>>,
 		pub score: i32,
 		pub matrix: Array2<i32>,
-		_secret: ()
+		_secret: (),
 	}
 
 	impl Solution {
@@ -247,7 +253,7 @@ mod solution {
 				paths,
 				score,
 				matrix,
-				_secret: ()  // mandate usage of the new constructor
+				_secret: (), // mandate usage of the new constructor
 			}
 		}
 	}
